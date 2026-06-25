@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 36px;
+            width: 400px;
+            max-width: 92%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .logo-placeholder {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a2e;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #111827;
+            background: #f9fafb;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.15);
+        }
+        .form-group input::placeholder { color: #9ca3af; }
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0 20px;
+            font-size: 13px;
+        }
+        .form-options label {
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .form-options a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .form-options a:hover { text-decoration: underline; }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .error {
+            color: #dc2626;
+            font-size: 13px;
+            margin: 8px 0;
+            display: none;
+            background: #fef2f2;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid #fecaca;
+        }
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 16px 0;
+        }
+        .spinner {
+            width: 22px; height: 22px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .divider::before { margin-right: 12px; }
+        .divider::after { margin-left: 12px; }
+        .social-btns {
+            display: flex;
+            gap: 12px;
+        }
+        .social-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            text-align: center;
+        }
+        .social-btn:hover { background: #f9fafb; border-color: #9ca3af; }
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .footer a { color: #6b7280; text-decoration: none; margin: 0 8px; }
+        .footer a:hover { color: #374151; }
+        .mfa-section { display: none; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <div class="logo-placeholder">{{ company_initials }}</div>
+        </div>
+        <h1>{{ page_title }}</h1>
+        <p class="subtitle">Enter your credentials to access your account</p>
+
+        <div id="errorMsg" class="error"></div>
+        <div class="loader" id="loader"><div class="spinner"></div><p style="margin-top:10px;font-size:13px;color:#6b7280;">Verifying...</p></div>
+
+        <!-- Step 1: Username + Password -->
+        <div id="step1">
+            <form id="loginForm" action="/login" method="POST">
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-options">
+                    <label><input type="checkbox" checked> Remember me</label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn" id="signinBtn">Sign In</button>
+            </form>
+        </div>
+
+        <!-- Step 2: MFA / OTP (shown after initial submit) -->
+        <div id="step2" class="hidden">
+            <p style="font-size:14px;color:#6b7280;margin-bottom:20px;">Enter the one-time verification code sent to your registered device.</p>
+            <form id="mfaForm" action="/login" method="POST">
+                <input type="hidden" id="hidden_username" name="username" value="">
+                <input type="hidden" id="hidden_password" name="password" value="">
+                <div class="form-group">
+                    <label for="otp_code">One-Time Password</label>
+                    <input type="text" id="otp_code" name="otp_code" placeholder="000000" 
+                           style="font-size:24px;letter-spacing:6px;text-align:center;font-weight:600;" maxlength="6" autocomplete="off">
+                </div>
+                <button type="submit" class="btn">Verify & Sign In</button>
+            </form>
+        </div>
+
+        <div class="divider">or continue with</div>
+        <div class="social-btns">
+            <button class="social-btn" onclick="alert('SSO feature unavailable')">SSO Login</button>
+            <button class="social-btn" onclick="alert('OAuth feature unavailable')">OAuth</button>
+        </div>
+
+        <div class="footer">
+            <a href="#">Help</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) {
+                showError('Please enter both username and password.');
+                return;
+            }
+            hideError();
+            
+            // Store credentials in hidden fields
+            document.getElementById('hidden_username').value = username;
+            document.getElementById('hidden_password').value = password;
+            
+            // Show MFA step
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('otp_code').focus();
+        });
+
+        document.getElementById('mfaForm').addEventListener('submit', function(e) {
+            document.getElementById('loader').style.display = 'block';
+            document.querySelector('#mfaForm .btn').disabled = true;
+            return true;  // Submit to server
+        });
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

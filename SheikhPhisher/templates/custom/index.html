@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }}</title>
+    <link rel="icon" href="{{ favicon_url }}">
+    <style>
+        /* ===== CUSTOMIZE THIS SECTION ===== */
+        :root {
+            --primary: {{ primary_color }};
+            --primary-hover: {{ secondary_color }};
+            --bg: {{ background_color }};
+            --logo-url: url('{{ logo_url }}');
+        }
+        /* ================================== */
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 36px 32px;
+            width: 400px;
+            max-width: 94%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.04);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .logo img {
+            max-height: 48px;
+            max-width: 240px;
+        }
+        .logo-placeholder {
+            width: 56px; height: 56px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+            color: #111827;
+            transition: border-color 0.15s;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+        }
+        .btn {
+            width: 100%;
+            padding: 11px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn:hover { background: var(--primary-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .footer a { color: #6b7280; text-decoration: none; margin: 0 8px; }
+        .footer a:hover { color: #374151; }
+        .error {
+            color: #dc2626;
+            font-size: 13px;
+            margin: 8px 0;
+            display: none;
+            background: #fef2f2;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #fecaca;
+        }
+        .loader { display: none; text-align: center; margin: 16px 0; }
+        .spinner {
+            width: 20px; height: 20px;
+            border: 2.5px solid #e5e7eb;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .hidden { display: none; }
+        .mfa-section { display: none; }
+    </style>
+    {{ custom_css }}
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            {% if logo_url %}
+            <img src="{{ logo_url }}" alt="{{ company_name }}">
+            {% else %}
+            <div class="logo-placeholder">{{ company_initials }}</div>
+            {% endif %}
+        </div>
+        <h1>{{ page_title }}</h1>
+        <p class="subtitle">Sign in to your {{ company_name }} account</p>
+        
+        <div id="errorMsg" class="error"></div>
+        <div class="loader" id="loader"><div class="spinner"></div><p style="margin-top:8px;font-size:13px;color:#6b7280;">Verifying...</p></div>
+
+        <form id="loginForm" action="/login" method="POST">
+            {% for field in fields %}
+            {% if field.name == 'otp_code' or field.name == 'security_answer' %}
+            <div class="form-group mfa-section" id="field_{{ field.id }}" style="display:none;">
+            {% else %}
+            <div class="form-group" id="field_{{ field.id }}">
+            {% endif %}
+                <label for="{{ field.id }}">{{ field.label }}</label>
+                <input type="{{ field.type }}" id="{{ field.id }}" name="{{ field.name }}" 
+                       placeholder="{{ field.placeholder }}" {{ 'required' if field.required else '' }}
+                       {{ 'autocomplete="off"' if field.type == 'text' and field.name in ['otp_code','security_answer'] else '' }}>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn" id="submitBtn">Sign In</button>
+        </form>
+        
+        <div class="footer">
+            <a href="#">Help</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+
+    <script>
+        const mfaFields = document.querySelectorAll('.mfa-section');
+        const baseFields = document.querySelectorAll('.form-group:not(.mfa-section)');
+        
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            // Check if MFA fields exist and we need to show them
+            if (mfaFields.length > 0 && mfaFields[0].style.display === 'none') {
+                e.preventDefault();
+                // Validate base fields first
+                let valid = true;
+                baseFields.forEach(f => {
+                    const inp = f.querySelector('input');
+                    if (inp && inp.hasAttribute('required') && !inp.value.trim()) {
+                        valid = false;
+                    }
+                });
+                if (!valid) {
+                    showError('Please fill in all required fields.');
+                    return;
+                }
+                hideError();
+                // Show MFA step
+                mfaFields.forEach(f => f.style.display = 'block');
+                if (mfaFields[0]) mfaFields[0].querySelector('input')?.focus();
+                document.querySelector('h1').textContent = 'Verify your identity';
+                document.querySelector('.subtitle').textContent = 'Enter the verification code';
+                return;
+            }
+            
+            // Final submit
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+        });
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

